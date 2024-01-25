@@ -54,10 +54,18 @@ export class OperatorContainer extends TwLitElement {
 
     const leftFloat = this.fractionToFloat(left);
     const rightFloat = this.fractionToFloat(right);
-
-    const rawValue = this.doMath(leftFloat, rightFloat);
+    let rawValue = this.doMath(leftFloat, rightFloat);
 
     state.reset();
+
+    if (rawValue < 0) {
+      // value always needs to be positive as
+      // the negative state value will add
+      // a negative sign
+      rawValue *= -1;
+
+      state.negative = true;
+    }
 
     state.left = numberToString(rawValue);
   };
@@ -102,15 +110,6 @@ export class OperatorContainer extends TwLitElement {
       case OPERATORS.PLUS:
         value = left + right;
         break;
-    }
-
-    if (value < 0) {
-      state.negative = true;
-
-      // value always needs to be positive as
-      // the negative state value will add
-      // a negative sign
-      value *= -1;
     }
 
     return value;
