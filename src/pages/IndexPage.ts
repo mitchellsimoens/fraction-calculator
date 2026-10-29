@@ -9,8 +9,10 @@ import "../components/calc-layout";
 export class IndexPage extends TwLitElement {
   render(): TemplateResult {
     return html`
-      <div class="container h-screen py-4">
-        <calc-layout class="block h-full"></calc-layout>
+      <div
+        class="mx-auto flex min-h-[100dvh] max-w-md flex-col px-3 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]"
+      >
+        <calc-layout class="flex flex-1 flex-col"></calc-layout>
       </div>
     `;
   }

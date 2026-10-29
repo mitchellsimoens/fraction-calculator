@@ -20,10 +20,10 @@ export class CalcLayout extends TwLitElement {
   override render() {
     return html`
       <div
-        class="h-full grid grid-areas-layout grid-cols-layout grid-rows-layout"
+        class="flex-1 grid grid-areas-layout grid-cols-layout grid-rows-layout"
       >
         <results-container
-          class="flex grid-in-results h-16 pb-2"
+          class="flex grid-in-results pb-2"
         ></results-container>
 
         ${this.renderWholePosition()}
@@ -38,10 +38,10 @@ export class CalcLayout extends TwLitElement {
   private renderWholePosition() {
     return html`
       <number-container class="flex grid-in-whole" position="whole">
-        <number-item class="flex" slot="beginning" @click=${this.onClear}
+        <number-item class="flex" slot="beginning" variant="fn" @click=${this.onClear}
           >Clear</number-item
         >
-        <number-item class="flex" slot="beginning" @click=${this.onNegative}
+        <number-item class="flex" slot="beginning" variant="fn" @click=${this.onNegative}
           >&plus;/&minus;</number-item
         >
       </number-container>
@@ -51,10 +51,9 @@ export class CalcLayout extends TwLitElement {
   private renderFractionPosition(position: "numerator" | "denominator") {
     return html`<number-container
       class=${classMap({
-        "border-t-4": position === "denominator",
-        "border-t-red-600": position === "denominator",
-        "border-b-4": position === "numerator",
-        "border-b-red-600": position === "numerator",
+        // the glowing fraction bar between the two keypads
+        "border-b-2": position === "numerator",
+        "border-accent/70": position === "numerator",
         flex: true,
         [`grid-in-${position}`]: true,
       })}

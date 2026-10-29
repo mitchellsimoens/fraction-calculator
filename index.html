@@ -3,19 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0A0C12" />
     <title>Fraction Calculator</title>
 
-    <style>
-      html {
-        overflow: hidden;
-        height: 100vh;
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;600&display=swap"
+      rel="stylesheet"
+    />
 
-    body {
-        height: 100vh;
-        overflow: auto;
-    }
+    <style>
+      /* One flat base colour reaches every edge (and matches theme-color),
+         so the status bar and toolbar areas blend into the page. */
+      html {
+        background: #0a0c12;
+        color-scheme: dark;
+        overscroll-behavior: none;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh; /* tracks iOS Safari's toolbar */
+        background:
+          radial-gradient(
+            70% 26% at 50% 28%,
+            rgba(165, 180, 255, 0.1),
+            transparent 70%
+          ),
+          #0a0c12;
+        background-attachment: fixed;
+      }
     </style>
   </head>
   <body>

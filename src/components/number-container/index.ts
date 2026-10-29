@@ -25,7 +25,8 @@ export class NumberContainer extends TwLitElement {
       <div
         class=${classMap({
           grid: true,
-          "gap-4": true,
+          "auto-rows-fr": true,
+          "gap-3": true,
           "p-2": true,
           "w-full": true,
           "grid-cols-2": position === "whole",
@@ -65,6 +66,7 @@ export class NumberContainer extends TwLitElement {
         >
         <number-item
           class="flex col-span-2"
+          variant="fn"
           @click=${this.onDeleteClick}
           >del</number-item
         >
@@ -76,7 +78,19 @@ export class NumberContainer extends TwLitElement {
     return state.operator == null ? "left" : "right";
   }
 
+  // typing or deleting right after "=" replaces the result
+  // instead of editing its digits; operators still carry it on
+  private startFreshEntry(): void {
+    if (state.operator == null && state.showingResult) {
+      state.left = "";
+      state.negative = false;
+      state.showingResult = false;
+    }
+  }
+
   private onDeleteClick = () => {
+    this.startFreshEntry();
+
     const { whichStateValue } = this;
     const values = splitValue(state[whichStateValue]);
 
@@ -98,6 +112,8 @@ export class NumberContainer extends TwLitElement {
   };
 
   private onNumberClick = (value: string) => () => {
+    this.startFreshEntry();
+
     const { whichStateValue } = this;
     const values = splitValue(state[whichStateValue]);
 

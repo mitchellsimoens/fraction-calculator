@@ -4,9 +4,8 @@ import { customElement } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { TwLitElement } from "../../common/TwLitElement";
 import { state } from "../../state";
-import { numberToString } from "../../util/numberToString";
+import { calculate, formatFraction, parseFraction } from "../../util/fraction";
 import { OPERATORS, OPERATORS_HTML } from "../../util/operators";
-import { splitValue } from "../../util/regex";
 
 import "../number-item";
 
@@ -19,12 +18,15 @@ export class OperatorContainer extends TwLitElement {
 
   override render() {
     return html`
-      <div class="flex gap-4 w-full">
+      <div class="flex gap-3 w-full p-2">
         ${this.renderButton(OPERATORS.PLUS)}
         ${this.renderButton(OPERATORS.MINUS)}
         ${this.renderButton(OPERATORS.MULTIPLY)}
         ${this.renderButton(OPERATORS.DIVIDE)}
-        <number-item class="flex flex-1" @click=${this.onEqual}
+        <number-item
+          class="flex flex-1"
+          variant="equals"
+          @click=${this.onEqual}
           >&equals;</number-item
         >
       </div>
@@ -33,7 +35,10 @@ export class OperatorContainer extends TwLitElement {
 
   private renderButton(operator: OPERATORS) {
     return html`
-      <number-item class="flex flex-1" @click=${this.onClick(operator)}
+      <number-item
+        class="flex flex-1"
+        variant="op"
+        @click=${this.onClick(operator)}
         >${unsafeHTML(OPERATORS_HTML[operator])}</number-item
       >
     `;
@@ -52,68 +57,30 @@ export class OperatorContainer extends TwLitElement {
       return;
     }
 
-    const leftFloat = this.fractionToFloat(left);
-    const rightFloat = this.fractionToFloat(right);
-    let rawValue = this.doMath(leftFloat, rightFloat);
+    const leftFraction = parseFraction(left, state.negative);
+    const rightFraction = parseFraction(right);
+
+    if (!leftFraction || !rightFraction) {
+      return;
+    }
+
+    const result = calculate(leftFraction, operator, rightFraction);
+
+    if (!result) {
+      // division by zero: leave the entered values alone
+      return;
+    }
+
+    const { text, negative } = formatFraction(result);
 
     state.reset();
 
-    if (rawValue < 0) {
-      // value always needs to be positive as
-      // the negative state value will add
-      // a negative sign
-      rawValue *= -1;
-
-      state.negative = true;
-    }
-
-    state.left = numberToString(rawValue);
+    // the text is always positive as the negative state
+    // value will add a negative sign
+    state.negative = negative;
+    state.left = text;
+    state.showingResult = true;
   };
-
-  private fractionToFloat(value: string): number {
-    let [, whole, numerator, denominator] = splitValue(value);
-    let final: number;
-
-    if (whole) {
-      final = Number(whole);
-    } else {
-      final = 0;
-    }
-
-    if (numerator && denominator) {
-      return final + Number(numerator) / Number(denominator);
-    }
-
-    return final;
-  }
-
-  private doMath(left: number, right: number): number {
-    if (state.negative) {
-      left *= -1;
-    }
-
-    let value: number;
-
-    switch (state.operator) {
-      case OPERATORS.DIVIDE:
-        value = left / right;
-        break;
-
-      case OPERATORS.MINUS:
-        value = left - right;
-        break;
-
-      case OPERATORS.MULTIPLY:
-        value = left * right;
-        break;
-
-      case OPERATORS.PLUS:
-        value = left + right;
-        break;
-    }
-
-    return value;
-  }
 }
 
 declare global {
