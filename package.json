@@ -6,10 +6,12 @@
     "dev": "vite dev",
     "start": "vite --host",
     "build": "vite build",
-    "lint": "eslint src --fix"
+    "lint": "eslint src --ext .ts --fix"
   },
   "devDependencies": {
     "@savvywombat/tailwindcss-grid-areas": "^4.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
     "autoprefixer": "^10.4.2",
     "eslint": "^8.8.0",
     "eslint-config-galex": "^3.6.3",
