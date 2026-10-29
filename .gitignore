@@ -3,3 +3,6 @@ dist/
 
 # visual companion mockups
 .superpowers/
+
+.DS_Store
+brag-output/
