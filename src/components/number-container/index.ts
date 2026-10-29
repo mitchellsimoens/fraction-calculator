@@ -4,7 +4,8 @@ import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { TwLitElement } from "../../common/TwLitElement";
 import { state } from "../../state";
-import { splitValue } from "../../util/regex";
+import { deleteFrom, emptyDraft, typeInto } from "../../equation/editing";
+import type { Draft } from "../../equation/types";
 
 import "../number-item";
 
@@ -74,71 +75,18 @@ export class NumberContainer extends TwLitElement {
     `;
   }
 
-  private get whichStateValue() {
-    return state.operator == null ? "left" : "right";
-  }
-
-  // typing or deleting right after "=" replaces the result
-  // instead of editing its digits; operators still carry it on
-  private startFreshEntry(): void {
-    if (state.operator == null && state.showingResult) {
-      state.left = "";
-      state.negative = false;
-      state.showingResult = false;
-    }
+  // typing right after "=" begins a fresh equation
+  private get base(): Draft {
+    return state.answer ? emptyDraft : state.draft;
   }
 
   private onDeleteClick = () => {
-    this.startFreshEntry();
-
-    const { whichStateValue } = this;
-    const values = splitValue(state[whichStateValue]);
-
-    switch (this.position) {
-      case "denominator":
-        values[3] = values[3].substring(0, values[3].length - 1);
-        break;
-
-      case "numerator":
-        values[2] = values[2].substring(0, values[2].length - 1);
-        break;
-
-      case "whole":
-        values[1] = values[1].substring(0, values[1].length - 1);
-        break;
-    }
-
-    state[whichStateValue] = this.formatFinalValue(values);
+    state.edit(deleteFrom(this.base, this.position));
   };
 
   private onNumberClick = (value: string) => () => {
-    this.startFreshEntry();
-
-    const { whichStateValue } = this;
-    const values = splitValue(state[whichStateValue]);
-
-    switch (this.position) {
-      case "denominator":
-        values[3] += value;
-        break;
-
-      case "numerator":
-        values[2] += value;
-        break;
-
-      case "whole":
-        values[1] += value;
-        break;
-    }
-
-    state[whichStateValue] = this.formatFinalValue(values);
+    state.edit(typeInto(this.base, this.position, value));
   };
-
-  private formatFinalValue(values: string[]): string {
-    const fraction = values[2] || values[3] ? ` ${values[2]}/${values[3]}` : "";
-
-    return `${values[1]}${fraction}`;
-  }
 }
 
 declare global {

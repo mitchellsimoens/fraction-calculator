@@ -1,24 +1,47 @@
 import { State, property } from "@lit-app/state";
-import { OPERATORS } from "../util/operators";
+import { emptyDraft } from "../equation/editing";
+import { type CalcError, solveDraft } from "../equation/solve";
+import type { Draft } from "../equation/types";
+import type { Fraction } from "../util/fraction";
+
+export type { CalcError };
 
 class AppState extends State {
-  @property({ value: "" }) left: string;
+  @property({ value: emptyDraft }) draft: Draft;
 
-  @property({ value: false }) negative: boolean;
+  // the solved value, set only after "="
+  @property({ value: null }) answer: Fraction | null;
 
-  @property({ value: null }) operator: OPERATORS;
+  @property({ value: null }) error: CalcError | null;
 
-  @property({ value: "" }) right: string;
+  @property({ value: false }) stepsOpen: boolean;
 
-  // true while `left` holds the result of a calculation
-  @property({ value: false }) showingResult: boolean;
+  // every key press goes through here: any edit discards the old answer
+  public edit(next: Draft): void {
+    this.draft = next;
+    this.answer = null;
+    this.error = null;
+    this.stepsOpen = false;
+  }
+
+  public solve(): void {
+    const solved = solveDraft(this.draft);
+
+    // unfinished drafts are ignored
+    if (solved === null) {
+      return;
+    }
+
+    this.answer = solved.answer;
+    this.error = solved.error;
+    this.stepsOpen = false;
+  }
 
   public reset(): void {
-    this.left = "";
-    this.negative = false;
-    this.operator = null;
-    this.right = "";
-    this.showingResult = false;
+    this.draft = emptyDraft;
+    this.answer = null;
+    this.error = null;
+    this.stepsOpen = false;
   }
 }
 

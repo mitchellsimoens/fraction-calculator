@@ -4,7 +4,7 @@ import { customElement } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { TwLitElement } from "../../common/TwLitElement";
 import { state } from "../../state";
-import { calculate, formatFraction, parseFraction } from "../../util/fraction";
+import { carryForward, pressOperator } from "../../equation/editing";
 import { OPERATORS, OPERATORS_HTML } from "../../util/operators";
 
 import "../number-item";
@@ -45,41 +45,13 @@ export class OperatorContainer extends TwLitElement {
   }
 
   onClick = (operator: OPERATORS) => () => {
-    this.onEqual();
+    const base = state.answer ? carryForward(state.answer) : state.draft;
 
-    state.operator = operator;
+    state.edit(pressOperator(base, operator));
   };
 
   onEqual = () => {
-    const { left, operator, right } = state;
-
-    if (!left || operator == null || !right) {
-      return;
-    }
-
-    const leftFraction = parseFraction(left, state.negative);
-    const rightFraction = parseFraction(right);
-
-    if (!leftFraction || !rightFraction) {
-      return;
-    }
-
-    const result = calculate(leftFraction, operator, rightFraction);
-
-    if (!result) {
-      // division by zero: leave the entered values alone
-      return;
-    }
-
-    const { text, negative } = formatFraction(result);
-
-    state.reset();
-
-    // the text is always positive as the negative state
-    // value will add a negative sign
-    state.negative = negative;
-    state.left = text;
-    state.showingResult = true;
+    state.solve();
   };
 }
 

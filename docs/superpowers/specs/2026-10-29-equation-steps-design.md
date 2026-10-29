@@ -114,6 +114,14 @@ These are guesses. Mark them as such in the plan and keep them easy to change.
   `7 1/4 - 2 3/5 + 2/13` that gives `7 65/260 - 2 156/260`, which borrows
   to `6 325/260 - 2 156/260 = 4 169/260`, then `+ 40/260` gives
   `4 209/260`.
+- **Borrowing with negatives (confirmed in review):** borrow from whichever
+  value is larger in size and never from the smaller one, so `-2 1/4 + 1/2`
+  and `1 3/4 - 2 1/4` work. Whole numbers do not count towards the common
+  denominator check, a multiplier of 1 is not shown, and a borrow can come
+  before any common-denominator step (`3 - 5/6`).
+- **Typing limits:** each part (whole, top, bottom) takes at most 6 digits;
+  anything that could not be calculated exactly shows "Those numbers are too
+  big" and a typed `/0` shows "Can't divide by zero".
 - **Arrow-down visual:** show the whole numbers dropping into their own row
   beneath the working. Exact styling is for the builder.
 - **Division by zero:** keep today's behaviour (do nothing, leave the

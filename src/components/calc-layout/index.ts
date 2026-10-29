@@ -3,15 +3,18 @@ import { html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { TwLitElement } from "../../common/TwLitElement";
+import { carryForward, toggleSign } from "../../equation/editing";
 import { state } from "../../state";
 
 import "../number-container";
 import "../number-item";
 import "../operator-container";
 import "../results-container";
+import "../steps-view";
 
 /**
- * An example element.
+ * The calculator: the display on top and the keypad below, or the
+ * step-by-step working in the keypad's place while it is open.
  */
 @customElement("calc-layout")
 export class CalcLayout extends TwLitElement {
@@ -23,15 +26,28 @@ export class CalcLayout extends TwLitElement {
         class="flex-1 grid grid-areas-layout grid-cols-layout grid-rows-layout"
       >
         <results-container
-          class="flex grid-in-results pb-2"
+          class="flex grid-in-results"
         ></results-container>
 
-        ${this.renderWholePosition()}
-        ${this.renderFractionPosition("numerator")}
-        ${this.renderFractionPosition("denominator")}
-
-        <operator-container class="flex grid-in-operators pt-2"></operator-container>
+        ${state.stepsOpen ? this.renderSteps() : this.renderKeypad()}
       </div>
+    `;
+  }
+
+  // while open, the steps take the whole keypad area
+  private renderSteps() {
+    return html`<steps-view
+      class="flex min-h-0 flex-col [grid-area:2/1/5/3]"
+    ></steps-view>`;
+  }
+
+  private renderKeypad() {
+    return html`
+      ${this.renderWholePosition()}
+      ${this.renderFractionPosition("numerator")}
+      ${this.renderFractionPosition("denominator")}
+
+      <operator-container class="flex grid-in-operators pt-2"></operator-container>
     `;
   }
 
@@ -66,7 +82,10 @@ export class CalcLayout extends TwLitElement {
   };
 
   private onNegative = () => {
-    state.negative = !state.negative;
+    // after "=", the sign belongs to the answer, carried into a new equation
+    const base = state.answer ? carryForward(state.answer) : state.draft;
+
+    state.edit(toggleSign(base));
   };
 }
 

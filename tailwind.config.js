@@ -21,6 +21,16 @@ module.exports = {
         glow: "0 0 28px -4px rgba(165, 180, 255, 0.55)",
         bar: "0 10px 16px -12px rgba(165, 180, 255, 0.9)",
       },
+      // a short settle-in when a step changes; used with motion-safe: only
+      keyframes: {
+        "step-in": {
+          from: { opacity: "0", transform: "translateY(6px)" },
+          to: { opacity: "1", transform: "none" },
+        },
+      },
+      animation: {
+        "step-in": "step-in 200ms ease-out",
+      },
       gridTemplateAreas: {
         layout: [
           "results results",

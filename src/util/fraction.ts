@@ -10,7 +10,7 @@ export interface Fraction {
   readonly denominator: number;
 }
 
-const gcd = (a: number, b: number): number => {
+export const gcd = (a: number, b: number): number => {
   let x = Math.abs(a);
   let y = Math.abs(b);
 
@@ -21,13 +21,25 @@ const gcd = (a: number, b: number): number => {
   return x;
 };
 
+/**
+ * Least common multiple of two positive integers.
+ */
+export const lcm = (a: number, b: number): number => (a / gcd(a, b)) * b;
+
+/** Exact enough to show: safe integers over a positive denominator. */
+export const isSafeFraction = (value: Fraction): boolean =>
+  Number.isSafeInteger(value.numerator) &&
+  Number.isSafeInteger(value.denominator) &&
+  value.denominator > 0;
+
 const create = (numerator: number, denominator: number): Fraction => {
   const divisor = gcd(numerator, denominator) || 1;
   const sign = denominator < 0 ? -1 : 1;
 
+  // `+ 0` turns -0 into 0, so a zero result is never "negative"
   return {
-    numerator: (sign * numerator) / divisor,
-    denominator: (sign * denominator) / divisor,
+    numerator: (sign * numerator) / divisor + 0,
+    denominator: (sign * denominator) / divisor + 0,
   };
 };
 
