@@ -28,6 +28,7 @@ export class NumberItem extends TwLitElement {
           "min-h-[2.75rem]": true,
           "font-sans": true,
           "select-none": true,
+          "touch-manipulation": true,
           "transition duration-150": true,
           "motion-reduce:transition-none": true,
           "active:scale-95": true,

@@ -21,6 +21,9 @@
         background: #0a0c12;
         color-scheme: dark;
         overscroll-behavior: none;
+        /* No double-tap zoom, and no wait to see whether a tap is the first
+           of two: taps register at once. Pinch-zoom still works. */
+        touch-action: manipulation;
       }
 
       body {
